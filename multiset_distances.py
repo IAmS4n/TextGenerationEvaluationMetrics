@@ -21,7 +21,7 @@ def get_ngrams(sentences, n):
 
 class MultisetDistances:
 
-    def __init__(self, references, min_n=1, max_n=3):
+    def __init__(self, references, min_n=3, max_n=5):
         super().__init__()
         # print('multiset distances init upto {}!'.format(max_n))
         self.references = references

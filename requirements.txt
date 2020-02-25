@@ -1,5 +1,3 @@
 POT
 Cython
 transformers
-FastBLEU
-
