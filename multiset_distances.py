@@ -34,17 +34,17 @@ class MultisetDistances:
     def get_cached_fields(self):
         return self.ref_ngrams,
 
-    def _get_ngrams(self, samples):
-        samples_size = len(samples)
-        all_counters = [Counter([x for y in get_ngrams(samples, n + 1) for x in y])
+    def _get_ngrams(self, sentences):
+        samples_size = len(sentences)
+        all_counters = [Counter([x for y in get_ngrams(sentences, n + 1) for x in y])
                         for n in range(self.max_n)]
         for n_counter in all_counters:
             for k in n_counter.keys():
                 n_counter[k] /= samples_size
         return all_counters
 
-    def get_ngram_stuff(self, samples):
-        sample_ngrams = self._get_ngrams(samples)
+    def get_ngram_stuff(self, sentences):
+        sample_ngrams = self._get_ngrams(sentences)
         ngrams_intersection = [sample_ngrams[i] & self.ref_ngrams[i]
                                for i in range(self.max_n)]  # intersection:  min(c[x], d[x])
         ngrams_union = [sample_ngrams[i] | self.ref_ngrams[i]
@@ -64,9 +64,9 @@ class MultisetDistances:
                          range(self.max_n)]
         return jaccard_value
 
-    def get_jaccard_score(self, samples):
+    def get_jaccard_score(self, sentences):
         print('Jaccard distances preprocess upto {}!'.format(self.max_n))
-        ngrams_intersection, ngrams_union, ngrams_abs_diff, ngrams_added = self.get_ngram_stuff(samples)
+        ngrams_intersection, ngrams_union, ngrams_abs_diff, ngrams_added = self.get_ngram_stuff(sentences)
 
         jaccard_value = self._jaccard(ngrams_intersection=ngrams_intersection, ngrams_union=ngrams_union)
 
@@ -77,9 +77,9 @@ class MultisetDistances:
                           range(self.max_n)]
         return sorensen_value
 
-    def get_sorensen_score(self, samples):
+    def get_sorensen_score(self, sentences):
         print('Sorensen distances preprocess upto {}!'.format(self.max_n))
-        ngrams_intersection, ngrams_union, ngrams_abs_diff, ngrams_added = self.get_ngram_stuff(samples)
+        ngrams_intersection, ngrams_union, ngrams_abs_diff, ngrams_added = self.get_ngram_stuff(sentences)
 
         sorensen_value = self._sorensen(ngrams_abs_diff=ngrams_abs_diff, ngrams_added=ngrams_added)
 
@@ -90,9 +90,9 @@ class MultisetDistances:
                           for n in range(self.max_n)]
         return canberra_value
 
-    def get_canberra_score(self, samples):
+    def get_canberra_score(self, sentences):
         print('Canberra distances preprocess upto {}!'.format(self.max_n))
-        ngrams_intersection, ngrams_union, ngrams_abs_diff, ngrams_added = self.get_ngram_stuff(samples)
+        ngrams_intersection, ngrams_union, ngrams_abs_diff, ngrams_added = self.get_ngram_stuff(sentences)
         canberra_value = self._canberra(ngrams_abs_diff=ngrams_abs_diff, ngrams_added=ngrams_added)
         return {n: self._final_average(canberra_value[:n]) for n in range(self.min_n, self.max_n + 1)}
 
@@ -101,17 +101,17 @@ class MultisetDistances:
                            range(self.max_n)]
         return minkowski_value
 
-    def get_minkowski_score(self, samples, p):
+    def get_minkowski_score(self, sentences, p):
         print('Minkowski (p={}) distances preprocess upto {}!'.format(p, self.max_n))
-        ngrams_intersection, ngrams_union, ngrams_abs_diff, ngrams_added = self.get_ngram_stuff(samples)
+        ngrams_intersection, ngrams_union, ngrams_abs_diff, ngrams_added = self.get_ngram_stuff(sentences)
 
         minkowski_value = self._minkowski(ngrams_abs_diff=ngrams_abs_diff, p=p)
 
         return {n: self._final_average(minkowski_value[:n]) for n in range(self.min_n, self.max_n + 1)}
 
-    def get_all_score(self, samples, max_mikowski_order=3):
+    def get_all_score(self, sentences, max_mikowski_order=3):
         print('multiset distances preprocess upto {}!'.format(self.max_n))
-        ngrams_intersection, ngrams_union, ngrams_abs_diff, ngrams_added = self.get_ngram_stuff(samples)
+        ngrams_intersection, ngrams_union, ngrams_abs_diff, ngrams_added = self.get_ngram_stuff(sentences)
 
         temp_results = {}
 
@@ -140,12 +140,12 @@ if __name__ == "__main__":
             'being', 'under', 'the', 'command', 'of', 'the', 'Party']
     ref3 = ['It', 'is', 'the', 'practical', 'guide', 'for', 'the', 'army', 'always', 'to', 'heed', 'the', 'directions',
             'of', 'the', 'party']
-    hyp1 = ['It', 'is', 'a', 'guide', 'to', 'action', 'which', 'ensures', 'that', 'the', 'military', 'always', 'obeys',
+    sen1 = ['It', 'is', 'a', 'guide', 'to', 'action', 'which', 'ensures', 'that', 'the', 'military', 'always', 'obeys',
             'the', 'commands', 'of', 'the', 'party']
-    hyp2 = ['he', 'read', 'the', 'book', 'because', 'he', 'was', 'interested', 'in', 'world', 'history']
+    sen2 = ['he', 'read', 'the', 'book', 'because', 'he', 'was', 'interested', 'in', 'world', 'history']
 
-    list_of_references = [ref1, ref2, ref3]
-    hypotheses = [hyp1, hyp2]
+    references = [ref1, ref2, ref3]
+    sentences = [sen1, sen2]
 
-    msd = MultisetDistances(references=list_of_references)
-    print(msd.get_jaccard_score(hypotheses))
+    msd = MultisetDistances(references=references)
+    print(msd.get_jaccard_score(sentences=sentences))
