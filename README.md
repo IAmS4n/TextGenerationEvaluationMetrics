@@ -45,7 +45,7 @@ embd_distance_sentences2 = embd.get_score(sentences=sentences2)
 
 # Resources
 * [Paper](https://arxiv.org/pdf/1904.03971.pdf)
-* [Poster](https://ehsan-mae.github.io/posters/NAACL2019_NeuralGen_JointlyMeasuring.pdf)
+* [Poster](https://iams4n.github.io/posters/NAACL2019_NeuralGen_JointlyMeasuring.pdf)
 * [Presentation Video](https://www.youtube.com/watch?v=x0MDJe4Oc4k)
 * [Slide](https://docs.google.com/presentation/d/1S-kgqCYNeC9SiIOQ_GshQvVnJYEp1yXARcZAe-a2oDg)
 
